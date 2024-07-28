@@ -1,5 +1,5 @@
 import java.awt.*;
-import java.awt.event.ActionEvent;
+import java.awt.event.*;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +15,7 @@ public class TaskManager {
     private DefaultTableModel tableModel;
     private JTextField filterInput;
     private JPanel mainPanel;
-    private boolean isModified; // Ajout du flag isModified
+    private boolean isModified;
     private static final String SAVE_FILE = "tasks.ser";
 
     public TaskManager() throws IOException {
@@ -29,7 +29,7 @@ public class TaskManager {
         mainPanel = new JPanel(new BorderLayout(10, 10));
         initializeUI();
         refreshTable();
-        isModified = false; // Initialisation du flag
+        isModified = false;
     }
 
     private void initializeUI() {
@@ -74,15 +74,16 @@ public class TaskManager {
     }
 
     private void addTask(ActionEvent e) {
-        String name = nameInput.getText();
-        String description = descriptionInput.getText();
+        String name = nameInput.getText().trim();
+        String description = descriptionInput.getText().trim();
         if (!name.isEmpty() && !description.isEmpty()) {
             Task task = new Task(name, description);
             tasks.add(task);
             tableModel.addRow(new Object[]{task.getName(), task.getDescription()});
             nameInput.setText("");
             descriptionInput.setText("");
-            isModified = true; // Marquer comme modifié
+            isModified = true;
+            JOptionPane.showMessageDialog(null, "Tâche ajoutée avec succès.", "Information", JOptionPane.INFORMATION_MESSAGE);
         } else {
             JOptionPane.showMessageDialog(null, "Veuillez remplir les deux champs.", "Erreur", JOptionPane.ERROR_MESSAGE);
         }
@@ -93,7 +94,8 @@ public class TaskManager {
         if (selectedRow != -1) {
             tasks.remove(selectedRow);
             tableModel.removeRow(selectedRow);
-            isModified = true; // Marquer comme modifié
+            isModified = true;
+            JOptionPane.showMessageDialog(null, "Tâche supprimée avec succès.", "Information", JOptionPane.INFORMATION_MESSAGE);
         } else {
             JOptionPane.showMessageDialog(null, "Veuillez sélectionner une tâche à supprimer.", "Erreur", JOptionPane.ERROR_MESSAGE);
         }
@@ -110,7 +112,8 @@ public class TaskManager {
                 task.setDescription(newDescription);
                 tableModel.setValueAt(newName, selectedRow, 0);
                 tableModel.setValueAt(newDescription, selectedRow, 1);
-                isModified = true; // Marquer comme modifié
+                isModified = true;
+                JOptionPane.showMessageDialog(null, "Tâche modifiée avec succès.", "Information", JOptionPane.INFORMATION_MESSAGE);
             }
         } else {
             JOptionPane.showMessageDialog(null, "Veuillez sélectionner une tâche à modifier.", "Erreur", JOptionPane.ERROR_MESSAGE);
@@ -137,11 +140,11 @@ public class TaskManager {
     }
 
     private void saveTasks(ActionEvent e) {
-        if (isModified) { // Sauvegarder uniquement si modifié
+        if (isModified) {
             try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(SAVE_FILE))) {
                 oos.writeObject(new ArrayList<>(tasks));
+                isModified = false;
                 JOptionPane.showMessageDialog(null, "Tâches sauvegardées avec succès.", "Information", JOptionPane.INFORMATION_MESSAGE);
-                isModified = false; // Réinitialiser le flag
             } catch (IOException ex) {
                 JOptionPane.showMessageDialog(null, "Erreur lors de la sauvegarde des tâches : " + ex.getMessage(), "Erreur", JOptionPane.ERROR_MESSAGE);
             }
