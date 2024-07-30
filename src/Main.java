@@ -3,7 +3,6 @@ import javax.swing.*;
 
 public class Main {
     public static void main(String[] args) {
-        // Crée et affiche l'interface utilisateur dans le thread de l'interface utilisateur
         SwingUtilities.invokeLater(() -> {
             try {
                 JFrame frame = new JFrame("Gestionnaire de Tâches");
@@ -18,5 +17,5 @@ public class Main {
                 JOptionPane.showMessageDialog(null, "Erreur lors du chargement des tâches : " + e.getMessage(), "Erreur", JOptionPane.ERROR_MESSAGE);
             }
         });
-    } 
+    }
 }
